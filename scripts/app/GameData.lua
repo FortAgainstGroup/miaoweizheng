@@ -149,8 +149,10 @@ GameSkillLevelUp.scale = 0.5
 GameSkillLevelUp.radius = 125*GameSkillLevelUp.scale
 GameSkillLevelUp.price = 200 --升级所需的价格
 
-GameBullet = GameBullet or{}     ---------------------------------------------
-GameBullet.name = "bullet.png"----------------------------------------------------
-GameBullet.scale = 0.05----------------------------------------------------------
-GameBullet.radius = 80*GameBullet.scale----------------------------------------------------
+GameBullet = GameBullet or{} ----------子弹
+GameBullet.name = "bullet.png"
+GameBullet.scale = 0.05
+GameBullet.radius = 80*GameBullet.scale
 GameBullet.speed = 3
+GameBullet.bullet = 1
+GameBullet.shot = 2
