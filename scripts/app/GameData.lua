@@ -96,7 +96,7 @@ GameTank1.price = 100 --价格
 GameTank1.life = 50 --生命
 GameTank1.ATK = 25  --攻击力
 GameTank1.DEF = 5  --防御力
-GameTank1.SD = 300   --射程
+GameTank1.SD = 80    --射程
 GameTank1.ASP = 4   --攻速
 
 GameTank2 = GameTank2 or {}
@@ -154,7 +154,6 @@ GameBullet.name = "bullet.png"
 GameBullet.scale = 0.05
 GameBullet.radius = 80*GameBullet.scale
 GameBullet.speed = 3
-GameBullet.bullet = 1
-GameBullet.shot = 2
-GameBullet.track = 3     -----------------------------------------追踪
-
+GameBullet.bullet = 1 --普通弹
+GameBullet.shot = 2 --散弹
+GameBullet.track = 3 --追踪弹

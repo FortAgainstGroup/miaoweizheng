@@ -85,31 +85,36 @@ function GameDirector:initButton( scene ) 										----------按钮
 	scene:addChild(self._layerButton)
 end
 
-function GameDirector:addButton(name,cmd,pos,label)
+function GameDirector:addButton(name,cmd,pos,label)								----------(按钮属性，功能，位置，标签)
     local Button = ClassButton.new()
     Button:init(name,cmd,pos,label)
     table.insert(self._listButton, Button)
     self._layerButton:addChild(Button)
 end
 
-function  GameDirector:initBullet(scene)        ----------------------------------子弹
+function  GameDirector:initBullet(scene)       			 						----------子弹
 	self._listBullet = {}
-	self._layerBullet = display.newNode()----------------------------------------
-	scene:addChild(self._layerBullet)-----------------------------------------------
+	self._layerBullet = display.newNode()
+	scene:addChild(self._layerBullet)
 end
-function  GameDirector:addBullet(node,pos,angle,sd)---------------------------------------------            加了一个射程属性
-	local Bullet = ClassBullet.new()---------------------------------------------
-    Bullet:init(node,pos,13,angle,sd)-------------------------------------------------------
-    table.insert(self._listBullet, Bullet)----------------------------------------------------
-    self._layerBullet:addChild(Bullet)---------------------------------------------
-end
-function GameDirector:addTrackBullet(node,pos,angle,node1,sd) --------------------------------------------------加追踪
-	local Bullet = ClassBullet.new()---------------------------------------------
-    Bullet:init(node,pos,13,angle,sd)-------------------------------------------------------
-    Bullet._goal = node1
-    table.insert(self._listBullet, Bullet)----------------------------------------------------
+
+function  GameDirector:addBullet(node,pos,angle,sd,camp) 						----------(子弹属性，位置，角度，射程，阵营)
+	local Bullet = ClassBullet.new()
+    Bullet:init(node,pos,30,angle,sd,camp)
+    table.insert(self._listBullet, Bullet)
     self._layerBullet:addChild(Bullet)
 end
+
+function GameDirector:addTrackBullet(node,pos,angle,node1,sd,camp) 					----------追踪弹(子弹属性，位置，角度，射程，阵营)
+	local Bullet = ClassBullet.new()
+    Bullet:init(node,pos,30,angle,sd,camp)
+    Bullet._goal = node1
+    table.insert(self._listBullet, Bullet)
+    self._layerBullet:addChild(Bullet)
+end
+
+
+
 function GameDirector:touchButton(name, x, y, prevX, prevY) 					----------点击按钮
 	for i,Button in ipairs(self._listButton) do
 		if Button:onTouch(name, x, y, prevX, prevY) then
@@ -126,7 +131,7 @@ function GameDirector:initUnit( scene ) 											---------我方单位
 	scene:addChild(self._layerUnit)
 end
 
-function GameDirector:addUnit(name,state,pos)
+function GameDirector:addUnit(name,state,pos) 									----------(单位属性，初始状态，位置)
     local Unit = ClassUnit.new()
     Unit:init(name,state,pos,self._camp1)
     table.insert(self._listUnit, Unit)
@@ -139,7 +144,7 @@ function GameDirector:initUnit2( scene ) 										----------敌方单位
 	scene:addChild(self._layerUnit2)
 end
 
-function GameDirector:addUnit2(node,state,pos)
+function GameDirector:addUnit2(node,state,pos) 									----------(单位属性，初始状态，位置)
     local Unit2 = ClassUnit.new()
     Unit2:init(node,state,pos,self._camp2)
     table.insert(self._listUnit2, Unit2)
@@ -170,7 +175,7 @@ function GameDirector:addUnit2OnTime(  ) 										----------按时间增加敌�
 	elseif self._AddUnitTime <= 0 and #self._listUnit2 < GameUnit.maxNum then
 		if self._listFort[2]._gold >= GameTank2.price then
 			local x = math.random(GameData.rectScreen.right/2,GameData.rectScreen.right*2/3)
-			local y = math.random(100,GameData.rectScreen.top-100)
+			local y = math.random(150,GameData.rectScreen.top-150)
 			self._AddUnitTime = GameUnit.addTime
 			self:addUnit2(GameTank2,State.move,ccp(x, y))
 			self._listFort[2]._gold = self._listFort[2]._gold - GameTank2.price
