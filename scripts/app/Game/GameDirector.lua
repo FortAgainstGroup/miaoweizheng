@@ -97,14 +97,19 @@ function  GameDirector:initBullet(scene)        --------------------------------
 	self._layerBullet = display.newNode()----------------------------------------
 	scene:addChild(self._layerBullet)-----------------------------------------------
 end
-function  GameDirector:addBullet(node,pos,angle)---------------------------------------------
+function  GameDirector:addBullet(node,pos,angle,sd)---------------------------------------------            加了一个射程属性
 	local Bullet = ClassBullet.new()---------------------------------------------
-    Bullet:init(node,pos,13,angle)-------------------------------------------------------
+    Bullet:init(node,pos,13,angle,sd)-------------------------------------------------------
     table.insert(self._listBullet, Bullet)----------------------------------------------------
     self._layerBullet:addChild(Bullet)---------------------------------------------
 end
-
-
+function GameDirector:addTrackBullet(node,pos,angle,node1,sd) --------------------------------------------------加追踪
+	local Bullet = ClassBullet.new()---------------------------------------------
+    Bullet:init(node,pos,13,angle,sd)-------------------------------------------------------
+    Bullet._goal = node1
+    table.insert(self._listBullet, Bullet)----------------------------------------------------
+    self._layerBullet:addChild(Bullet)
+end
 function GameDirector:touchButton(name, x, y, prevX, prevY) 					----------点击按钮
 	for i,Button in ipairs(self._listButton) do
 		if Button:onTouch(name, x, y, prevX, prevY) then

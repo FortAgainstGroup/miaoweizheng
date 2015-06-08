@@ -144,7 +144,8 @@ function Unit:toAttack(  ) 														----------进攻
 	if self._goal._state ~= State.null then
 		self._AIN = self._AIN - self._ASP
 		if self._AIN <= 0 then
-			self:fire(GameBullet.bullet) 				----------发射炮弹
+			--self:fire(GameBullet.bullet)
+			self:fire(GameBullet.track)			----------发射炮弹
 			self._AIN = GameData.fps
 		end
 	end
@@ -185,14 +186,17 @@ function Unit:updateAttackMe() 													----------更新敌人
 	end
 end
 
-function Unit:fire( bullet )
+function Unit:fire( bullet ) ---------------------------------------加了追踪单
 	local curPos = self:getPositionInCCPoint()
 	if bullet == GameBullet.bullet then
-		g_director:addBullet(GameBullet,curPos,self._angle)
+		g_director:addBullet(GameBullet,curPos,self._angle,self._SD)
 	elseif bullet == GameBullet.shot then
-		g_director:addBullet(GameBullet,curPos,self._angle-45)
-		g_director:addBullet(GameBullet,curPos,self._angle+45)
-		g_director:addBullet(GameBullet,curPos,self._angle)
+		g_director:addBullet(GameBullet,curPos,self._angle-45,self._SD)
+		g_director:addBullet(GameBullet,curPos,self._angle+45,self._SD)
+		g_director:addBullet(GameBullet,curPos,self._angle,self._SD)
+	elseif bullet == GameBullet.track then
+		g_director:addTrackBullet(GameBullet,curPos,self._angle,self._goal,self._SD)
 	end
 end
-return Unit
+
+return Unit 
