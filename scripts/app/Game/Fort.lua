@@ -13,12 +13,10 @@ function Fort:ctor()
 end
 
 function Fort:init( node )
-	local img = display.newSprite(node.name)
 	self._scale=node.scale
 	self:setScale(self._scale)
 	self._r=node.radius
 	self:setAnchorPoint(ccp(0,0))
-	self:addChild(img)
 
 	self:setPosition(node.pos) 					
 	self._pos = node.pos ----------位置
@@ -31,13 +29,15 @@ function Fort:init( node )
 	self._SD = node.SD    ----------射程
 	self._ASP = node.ASP    ----------攻速
 	self._goldINC = node.goldINC ----------单位时间获得的金钱
-    self._lifeLabel = cc.ui.UILabel.new({text = "", size = 25}) 		----------显示生命值
-    				:align(display.CENTER, 1.5*(3-2*node.camp)*self._r, 25)
+    self._lifeLabel = cc.ui.UILabel.new({text = "", size = 50}) 		----------显示生命值
+    				:align(display.CENTER, 0, -150)
     				:addTo(self)
-    self._goldLabel = cc.ui.UILabel.new({text = "", size = 25}) 		----------显示金钱
-    				:align(display.CENTER, 1.5*(3-2*node.camp)*self._r, -25)
+    self._goldLabel = cc.ui.UILabel.new({text = "", size = 50}) 		----------显示金钱
+    				:align(display.CENTER, 0, -250)
     				:addTo(self)
-
+    self._defLabel = cc.ui.UILabel.new({text = "", size = 50}) 			----------显示防御
+    				:align(display.CENTER, 0, -200)
+    				:addTo(self)
 end
 
 function Fort:initControl()
@@ -64,6 +64,9 @@ end
 function Fort:update()
     if self._state == State.null then
     	return true
+    elseif self._life <= 0 then
+		self._life = 0
+		self:setState(State.null)
     elseif self._state == State.def then
     	self:skillDEF() --塔防
     end
@@ -75,44 +78,19 @@ function Fort:update()
 	end
     self._lifeLabel:setString("生命"..self._life)
     self._goldLabel:setString("金钱"..self._gold)
+    self._defLabel:setString("防御"..self._DEF)
 
-
-end
-
-function Fort:onTouch(name,x,y,prevX,prevY)
-	if math.abs(x - self._pos.x) < self._r then
-		if name == TouchEventString.began then
-	        -- click(self)
-		elseif name == TouchEventString.ended then
-	        
-		end
-		return true	
-	else 
-		return false
-	end
 end
 
 function Fort:toDeath(  )
-	--self:updateAttackMe()
-end
-
-function Fort:updateAttackMe() 							----------更新敌人
-	if(self._listAttackMe ~= {})then
-		local i = 1
-        local count = #self._listAttackMe
-        while i <= count do
-	        local obj = self._listAttackMe[i]
-	        if obj._state == State.fight then
-	            obj:setState(obj._cmd)
-	        end
-            i = i + 1
-    	end
-	end
 end
 
 function Fort:toDef(  )
-	self._defTime = GameSkillDEF.time
-	self._DEF  = GameSkillDEF.def
+	if self._gold >= GameSkillDEF.price then
+		self._defTime = GameSkillDEF.time
+		self._DEF  = GameSkillDEF.def
+		self._gold = self._gold - GameSkillDEF.price
+	end
 end
 
 function Fort:skillDEF()								-----------塔防

@@ -60,6 +60,13 @@ function hitR2P(rect,pos) ----------越界
     return false
 end
 
+function effRange( pos ) ----------有效范围
+    if pos.x > CONFIG_SCREEN_WIDTH/5 and pos.x < CONFIG_SCREEN_WIDTH/2 and pos.y > CONFIG_SCREEN_HEIGHT/5 and pos.y < CONFIG_SCREEN_HEIGHT*4/5 then
+        return true
+    end
+    return false        
+end
+
 function getDistance(node1,node2) ----------单位与单位之间的距离 
     local detX = node1:getPositionX() - node2:getPositionX()
     local detY = node1:getPositionY() - node2:getPositionY()

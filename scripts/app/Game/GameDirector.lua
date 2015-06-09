@@ -18,14 +18,7 @@ function GameDirector:init(scene)
 	self:initUnit(scene)
 	self:initUnit2(scene)	
 
-	self:initButton(scene)													----------添加按钮
-	self:addButton(GameTank1,GameTouch.addUnitAttack,ccp(108, 28),"")
-	self:addButton(GameTank3,GameTouch.addUnitAttack,ccp(148, 28),"")
-
-    self:addButton(GameSkillLevelUp,GameTouch.levelUp,ccp(108, 400),"升级") 
-    self:addButton(GameSkillDEF,GameTouch.def,ccp(148, 400),"塔防") 
-
-    self:initBullet(scene)               ---------------------------------------------------------------
+    self:initBullet(scene)               
 
 	self:distributeCamp( )	 													----------分配阵营
 end
@@ -43,26 +36,26 @@ end
 
 function GameDirector:onTouch( name,x,y,prevX,prevY )
 	if name == TouchEventString.began then 
-		if self:touchButton(name, x, y, prevX, prevY) then 					----------点击按钮
-			if self._onTouch == GameTouch.levelUp then
-            	self:levelUp() 								--升级
-            	self._listFort[1]._gold = self._listFort[1]._gold - GameSkillLevelUp.price
-            elseif self._onTouch == GameTouch.def then
-           		self._listFort[1]:setState(State.def) 		--塔防
-           		self._listFort[1]._gold = self._listFort[1]._gold - GameSkillDEF.price
-			end
-		elseif self._listFort[1]:onTouch(name, x, y, prevX, prevY) then 		----------点击我方城堡
-			self._onTouch = GameTouch.fort1
+		-- if self:touchButton(name, x, y, prevX, prevY) then 					----------点击按钮
+		-- 	if self._onTouch == GameTouch.levelUp then
+  --           	self:levelUp() 								--升级
+  --           	self._listFort[1]._gold = self._listFort[1]._gold - GameSkillLevelUp.price
+  --           elseif self._onTouch == GameTouch.def then
+  --          		self._listFort[1]:setState(State.def) 		--塔防
+  --          		self._listFort[1]._gold = self._listFort[1]._gold - GameSkillDEF.price
+		-- 	end
+		-- elseif self._listFort[1]:onTouch(name, x, y, prevX, prevY) then 		----------点击我方城堡
+		-- 	self._onTouch = GameTouch.fort1
 		
-		elseif 	self._listFort[2]:onTouch(name, x, y, prevX, prevY) then 		----------点击敌方城堡
-			self._onTouch = GameTouch.fort2
+		-- elseif 	self._listFort[2]:onTouch(name, x, y, prevX, prevY) then 		----------点击敌方城堡
+		-- 	self._onTouch = GameTouch.fort2
 		
-		elseif self._onTouch == GameTouch.addUnitAttack then 					----------增加进攻单位
-			if self._listFort[1]._gold >= self._addNode.price then
-	        	self:addUnit(self._addNode,State.move,ccp(x, y))
-	        	self._listFort[1]._gold = self._listFort[1]._gold - self._addNode.price
-			end
-		end
+		-- elseif self._onTouch == GameTouch.addUnitAttack then 					----------增加进攻单位
+		-- 	if self._listFort[1]._gold >= self._addNode.price then
+	 --        	self:addUnit(self._addNode,State.move,ccp(x, y))
+	 --        	self._listFort[1]._gold = self._listFort[1]._gold - self._addNode.price
+		-- 	end
+		-- end
 	end	
 end
 
@@ -98,21 +91,12 @@ function  GameDirector:initBullet(scene)       			 						----------子弹
 	scene:addChild(self._layerBullet)
 end
 
-function  GameDirector:addBullet(node,pos,angle,sd,camp) 						----------(子弹属性，位置，角度，射程，阵营)
+function  GameDirector:addBullet(node,pos,power,angle,sd,camp,type,goal) 		----------(子弹属性，位置，角度，射程，阵营,子弹类型，目标)
 	local Bullet = ClassBullet.new()
-    Bullet:init(node,pos,30,angle,sd,camp)
+    Bullet:init(node,pos,power,angle,sd,camp,type,goal)
     table.insert(self._listBullet, Bullet)
     self._layerBullet:addChild(Bullet)
 end
-
-function GameDirector:addTrackBullet(node,pos,angle,node1,sd,camp) 					----------追踪弹(子弹属性，位置，角度，射程，阵营)
-	local Bullet = ClassBullet.new()
-    Bullet:init(node,pos,30,angle,sd,camp)
-    Bullet._goal = node1
-    table.insert(self._listBullet, Bullet)
-    self._layerBullet:addChild(Bullet)
-end
-
 
 
 function GameDirector:touchButton(name, x, y, prevX, prevY) 					----------点击按钮
@@ -153,7 +137,6 @@ end
 
 function GameDirector:distributeCamp(  ) 										----------分配阵营
 	self._camp1 = {} ----------我方阵营
-	-- self._camp1.name = 1
 	self._camp1.fort = self._listFort[1] --我方城堡
 	self._camp1.enemyFort = self._listFort[2] --敌方城堡
 	self._camp1.unit = self._listUnit --我方单位
@@ -161,7 +144,6 @@ function GameDirector:distributeCamp(  ) 										----------分配阵营
 	self._camp1.direction = 1
 
 	self._camp2 = {} ----------敌方阵营
-	-- self._camp2.name = 2
 	self._camp2.fort = self._listFort[2] --我方城堡
 	self._camp2.enemyFort = self._listFort[1] --敌方城堡
 	self._camp2.unit = self._listUnit2 --我方单位
@@ -177,37 +159,30 @@ function GameDirector:addUnit2OnTime(  ) 										----------按时间增加敌�
 			local x = math.random(GameData.rectScreen.right/2,GameData.rectScreen.right*2/3)
 			local y = math.random(150,GameData.rectScreen.top-150)
 			self._AddUnitTime = GameUnit.addTime
-			self:addUnit2(GameTank2,State.move,ccp(x, y))
+			self:addUnit2(GameTank3,State.move,ccp(x, y))
 			self._listFort[2]._gold = self._listFort[2]._gold - GameTank2.price
 		end
 	end
 end
 
-function GameDirector:levelUp() 											----------升级
-	local i = 1
-    local count = #self._listUnit
-    while (i <= count )do
-        local obj = self._listUnit[i]
-        obj._DEF = obj._DEF+2
-        obj._ATK = obj._ATK +20
-        i = i + 1
-    end
+function GameDirector:levelUp() 											----------武装升级
+	if self._listFort[1]._gold >= GameSkillLevelUp.price then
+		local i = 1
+	    local count = #self._listUnit
+	    while (i <= count )do
+	        local obj = self._listUnit[i]
+	        obj._ATK = obj._ATK +20
+	        i = i + 1
+	    end
+	    self._listFort[1]._gold = self._listFort[1]._gold - GameSkillLevelUp.price
+	end
 end
 
--- function GameDirector:checkUnit(x,y)
---      --updateObjectList(self._listUnit)
---     local i = 1
---     local count = #self._listUnit
---      while i <= count do
---        local obj = self._listUnit[i]
 
---         --obj:moveTo(4,x,y)
---         obj:_move(x,y)
---        --print(i)
---         i = i+1
---    end
-   
--- end
+function GameDirector:fortDEF()
+	self._listFort[1]:setState(State.def)
+end
+
 
 
 

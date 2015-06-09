@@ -3,7 +3,7 @@
 DEBUG = 1
 
 -- display FPS stats on screen
-DEBUG_FPS = false--true
+DEBUG_FPS = false
 
 -- dump memory info every 10 seconds
 DEBUG_MEM = false
@@ -18,8 +18,14 @@ LOAD_SHORTCODES_API = true
 CONFIG_SCREEN_ORIENTATION = "portrait"
 
 -- design resolution
-CONFIG_SCREEN_WIDTH  = 640
-CONFIG_SCREEN_HEIGHT = 960
+CONFIG_SCREEN_WIDTH  = 960
+CONFIG_SCREEN_HEIGHT = 640
 
 -- auto scale mode
 CONFIG_SCREEN_AUTOSCALE = "FIXED_WIDTH"
+
+GAME_SFX = {
+    startButton      = "play.wav",
+    common 			 = "common.wav",
+    background       = "background.mp3",
+}

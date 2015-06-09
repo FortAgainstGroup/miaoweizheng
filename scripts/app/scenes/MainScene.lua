@@ -1,68 +1,57 @@
-require("app.GameFunction")
-require("app.GameData")
-ClassGameDirectort = require("app.Game.GameDirector")
 
 local MainScene = class("MainScene", function()
     return display.newScene("MainScene")
 end)
 
 function MainScene:ctor()
-    self:initControl()
-    self:initBack()
-    g_director = ClassGameDirectort.new()
-    g_director:init(self)
-    self:initUpdate()
+    self._uiLayer = addCcsUi(self,"Ui_2/Ui_1.ExportJson")
 
-    self._state = State.alive
-
-end
-
-function MainScene:initControl()
-    local layer = display.newLayer() ----------鼠标点击控件
-    layer:setTouchEnabled(true)
-    layer:addNodeEventListener(cc.NODE_TOUCH_EVENT, 
-        function(event)
-            return self:onTouch(event.name, event.x, event.y, event.prevX, event.prevY)
-        end
-        )
-    layer:setTouchSwallowEnabled(false)
-    self:addChild(layer)
-end
-
-function MainScene:initBack()
-    local imgBack = display.newSprite("back1.jpg")
-    imgBack:setAnchorPoint(ccp(0,0))
-    self:addChild(imgBack) 
-end
-
-function MainScene:initUpdate()
-    self._scheduler = require("framework.scheduler")
-    self._scheduler.scheduleGlobal(handler(self, self.update), 1/GameData.fps)
-end
-
-function MainScene:update()
-    if self._state ~= State.null then
-        if g_director:update() then
-            self:gameOver() ----------游戏结束
-        end
+    self._uiItems = {}
+    local MUSIC_FILE = GAME_SFX.background 
+    if audio.isMusicPlaying()==false then
+      audio.playMusic(MUSIC_FILE, true)
     end
+    self._btn1 = self:addButton("btn_begin")
+    self._btn2 = self:addButton("btn_cancel")
+    self._btn3 = self:addButton("btn_set")
+  -- self._input = self:addUiItem("input", false)
+
+  -- self._labelName = self._uiLayer:getWidgetByName("label_name")
+
+  -- self:setUiItemsCanTouch(true)
 end
 
-function MainScene:onTouch(name,x,y,prevX,prevY)
-    if self._state ~= State.null then
-        if g_director:onTouch(name, x, y, prevX, prevY) then
-                
-    	end
+function MainScene:addButton(name)
+  local btn = self._uiLayer:getWidgetByName(name)
+  local function callbackButton(sender, eventType)
+    if eventType == TouchEventType.ended then
+      self:clickButton(sender:getName())
     end
-    return true
+  end 
+  btn:addTouchEventListener(callbackButton)
+  return btn
 end
 
-function MainScene:gameOver(  )                                                     ----------游戏结束
-    self._state = State.null
-    self._label = cc.ui.UILabel.new({text = "游戏结束", size = 50})                     
-                :align(display.CENTER, CONFIG_SCREEN_WIDTH/2, CONFIG_SCREEN_HEIGHT/2)
-                :addTo(self)
+function MainScene:setUiItemsCanTouch(isCanTouch) --------同时改变所有按钮是否可用的状态
+  for i,uiItem in ipairs(self._uiItems) do
+    -- uiItem:setCanTouch(isCanTouch)
+    uiItem:setTouchEnabled(isCanTouch)
+  end
+end
 
+function MainScene:clickButton(btnName)
+  if btnName == "btn_begin" then
+    app:enterWaitScene()
+  elseif btnName == "btn_set" then
+    app:enterSetScene()
+  elseif btnName == "btn_cancel" then
+    self:setUiItemsCanTouch(false)
+    local function callback()--------------------message box 的回调
+      self._msgBox:removeSelf()
+      self:setUiItemsCanTouch(true)
+    end
+    self._msgBox = addMessageBox(self, callback)
+  end
 end
 
 return MainScene
