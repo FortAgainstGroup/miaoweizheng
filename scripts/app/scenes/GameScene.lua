@@ -76,7 +76,7 @@ function GameScene:onTouch(name,x,y,prevX,prevY)
         if self._onTouch == GameTouch.addUnit then
           if effRange(ccp(x, y)) then
             if g_director._listFort[1]._gold >= self._addNode.price then
-              g_director:addUnit(self._addNode,State.move,ccp(x, y))
+              g_director:addUnit(self._addNode,State.move,ccp(g_director._listFort[1]._pos.x, y))
               g_director._listFort[1]._gold = g_director._listFort[1]._gold - self._addNode.price
             end
           end
